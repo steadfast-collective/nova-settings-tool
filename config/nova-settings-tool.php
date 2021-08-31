@@ -4,14 +4,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Settings Path
+    | Settings Model
     |--------------------------------------------------------------------------
     |
-    | Path to the JSON file where settings are stored.
+    | Model where settings are stored.
     |
     */
 
-    'path' => storage_path('app/settings.json'),
+    'model' => \App\Models\AppSettings::class,
 
     /*
     |--------------------------------------------------------------------------

@@ -4,7 +4,6 @@ namespace Bakerkretzmar\NovaSettingsTool\Http\Controllers;
 
 use Bakerkretzmar\NovaSettingsTool\Events\SettingsChanged;
 use Illuminate\Http\Request;
-use Spatie\Valuestore\Valuestore;
 
 class SettingsToolController
 {
@@ -12,14 +11,14 @@ class SettingsToolController
 
     public function __construct()
     {
-        $this->store = Valuestore::make(
-            config('nova-settings-tool.path', storage_path('app/settings.json'))
-        );
+        $settingsModel = config('nova-settings-tool.model');
+        
+        $this->store = $settingsModel::firstOrCreate();
     }
 
     public function read()
     {
-        $values = $this->store->all();
+        $values = $this->store->settings;
 
         $settings = collect(config('nova-settings-tool.settings'));
 
@@ -51,13 +50,15 @@ class SettingsToolController
 
     public function write(Request $request)
     {
-        $oldSettings = $this->store->all();
+        $oldSettings = $this->store->settings->toArray();
 
         foreach ($request->all() as $key => $value) {
-            $this->store->put($key, $value);
+            $this->store->settings->put($key, $value);
         }
 
-        event(new SettingsChanged($this->store->all(), $oldSettings));
+        $this->store->save();
+
+        event(new SettingsChanged($this->store->settings->toArray(), $oldSettings));
 
         return response()->json();
     }
