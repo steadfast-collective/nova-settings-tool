@@ -52,6 +52,10 @@ class SettingsToolController
     {
         $oldSettings = is_null($this->store->settings) ? [] : $this->store->settings->toArray();
 
+        if (is_null($this->store->settings)) {
+            $this->store->settings = collect([]);
+        }
+
         foreach ($request->all() as $key => $value) {
             $this->store->settings->put($key, $value);
         }
