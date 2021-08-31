@@ -50,7 +50,7 @@ class SettingsToolController
 
     public function write(Request $request)
     {
-        $oldSettings = $this->store->settings->toArray();
+        $oldSettings = is_null($this->store->settings) ? [] : $this->store->settings->toArray();
 
         foreach ($request->all() as $key => $value) {
             $this->store->settings->put($key, $value);
